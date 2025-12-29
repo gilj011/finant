@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Registre seus gastos de forma rápida e simples">
+    <title>Controle de Gastos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>💰 Meus Gastos</h1>
+            <div class="today-total">
+                <span class="label">Hoje:</span>
+                <span class="amount" id="todayTotal">R$ 0,00</span>
+            </div>
+        </header>
+
+        <!-- Main Add Button -->
+        <button class="btn-add-expense" id="btnAddExpense">
+            <span class="icon">+</span>
+            Adicionar Gasto
+        </button>
+
+        <!-- Filter Section -->
+        <section class="filter-section">
+            <h3>📅 Filtrar por Período</h3>
+
+            <!-- Quick Filters -->
+            <div class="quick-filters">
+                <button class="filter-btn" data-filter="today">Hoje</button>
+                <button class="filter-btn" data-filter="last7days">7 dias</button>
+                <button class="filter-btn" data-filter="thismonth">Este mês</button>
+                <button class="filter-btn" data-filter="lastmonth">Mês ant.</button>
+            </div>
+
+            <!-- Custom Date Range -->
+            <div class="custom-filter">
+                <div class="date-inputs">
+                    <div class="date-input-group">
+                        <label for="filterStartDate">De:</label>
+                        <input type="date" id="filterStartDate" class="date-input">
+                    </div>
+                    <div class="date-input-group">
+                        <label for="filterEndDate">Até:</label>
+                        <input type="date" id="filterEndDate" class="date-input">
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn-apply-filter" id="btnApplyFilter">Filtrar</button>
+                    <button class="btn-clear-filter" id="btnClearFilter">Limpar</button>
+                </div>
+            </div>
+
+            <!-- Filter Indicator -->
+            <div class="filter-indicator" id="filterIndicator" style="display: none;">
+                <span class="indicator-icon">📌</span>
+                <span class="indicator-text" id="filterIndicatorText"></span>
+            </div>
+        </section>
+
+
+        <!-- Expense Form (Hidden by default) -->
+        <div class="form-container" id="formContainer">
+            <form id="expenseForm">
+                <h2>Novo Gasto</h2>
+
+                <div class="form-group">
+                    <label for="amount">Valor (R$)</label>
+                    <input type="number" id="amount" name="amount" step="0.01" min="0.01" placeholder="0,00" required
+                        autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Categoria</label>
+                    <select id="category" name="category" required>
+                        <option value="">Selecione...</option>
+                        <option value="Alimentação">🍔 Alimentação</option>
+                        <option value="Transporte">🚗 Transporte</option>
+                        <option value="Lazer">🎮 Lazer</option>
+                        <option value="Saúde">💊 Saúde</option>
+                        <option value="Educação">📚 Educação</option>
+                        <option value="Moradia">🏠 Moradia</option>
+                        <option value="Outros">📦 Outros</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Data</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">Salvar</button>
+                    <button type="button" class="btn-cancel" id="btnCancel">Cancelar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Recent Expenses List -->
+        <section class="expenses-section">
+            <div class="section-header">
+                <h2>Últimos Gastos</h2>
+                <button class="btn-export" id="btnExport" title="Exportar para CSV">
+                    📊 Exportar
+                </button>
+            </div>
+            <div id="expensesList" class="expenses-list">
+                <p class="empty-state">Nenhum gasto registrado ainda.</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
