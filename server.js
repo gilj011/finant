@@ -45,6 +45,8 @@ function initializeDatabase() {
 // POST /api/expenses - Create new expense
 app.post('/api/expenses', (req, res) => {
     const { amount, category, date } = req.body;
+    console.log(`[POST] /api/expenses - Adding expense: Amount=${amount}, Category=${category}, Date=${date}`);
+
 
     // Validation
     if (!amount || !category || !date) {
@@ -129,6 +131,8 @@ app.get('/api/expenses/today', (req, res) => {
 // GET /api/expenses/export - Export all expenses as CSV with optional date range filter
 app.get('/api/expenses/export', (req, res) => {
     const { startDate, endDate } = req.query;
+    console.log(`[GET] /api/expenses/export - Exporting CSV. Filter: Start=${startDate || 'All'}, End=${endDate || 'All'}`);
+
 
     let sql = 'SELECT * FROM expenses';
     let params = [];
@@ -170,7 +174,28 @@ app.get('/api/expenses/export', (req, res) => {
     });
 });
 
+// DELETE /api/expenses/:id - Delete an expense
+app.delete('/api/expenses/:id', (req, res) => {
+    const { id } = req.params;
+    console.log(`[DELETE] /api/expenses/${id} - Deleting expense ID: ${id}`);
+    const sql = 'DELETE FROM expenses WHERE id = ?';
+
+    db.run(sql, id, function (err) {
+        if (err) {
+            console.error('Error deleting expense:', err.message);
+            return res.status(500).json({ error: 'Failed to delete expense' });
+        }
+
+        if (this.changes === 0) {
+            return res.status(404).json({ error: 'Expense not found' });
+        }
+
+        res.json({ message: 'Expense deleted successfully', id });
+    });
+});
+
 // Start server
+
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
     console.log(`Open your browser and navigate to http://localhost:${PORT}`);

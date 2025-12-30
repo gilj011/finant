@@ -415,7 +415,7 @@ header h1 {
 /* Expense Item */
 .expense-item {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto 1fr auto auto;
     gap: 1rem;
     padding: 1rem;
     background: var(--bg-primary);
@@ -423,6 +423,7 @@ header h1 {
     border-left: 4px solid var(--primary-color);
     transition: all 0.2s ease;
     animation: fadeIn 0.3s ease;
+    align-items: center;
 }
 
 @keyframes fadeIn {
@@ -471,6 +472,26 @@ header h1 {
     color: var(--danger-color);
     display: flex;
     align-items: center;
+}
+
+.btn-delete {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+}
+
+.btn-delete:hover {
+    background: #fee2e2;
+    color: var(--danger-color);
+    opacity: 1;
 }
 
 /* Responsive Design */

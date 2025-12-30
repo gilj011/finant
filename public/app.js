@@ -80,6 +80,7 @@ quickFilterBtns.forEach(btn => {
         btn.classList.add('active');
 
         const filterType = btn.dataset.filter;
+        console.log(`[UI] Quick filter clicked: ${filterType}`);
         applyQuickFilter(filterType);
     });
 });
@@ -147,6 +148,7 @@ btnApplyFilter.addEventListener('click', () => {
     currentFilter.startDate = start;
     currentFilter.endDate = end;
 
+    console.log(`[UI] Custom filter applied: ${start} to ${end}`);
     updateFilterIndicator(`${formatDate(start)} até ${formatDate(end)}`);
     loadExpenses();
 });
@@ -161,6 +163,7 @@ btnClearFilter.addEventListener('click', () => {
     quickFilterBtns.forEach(b => b.classList.remove('active'));
 
     filterIndicator.style.display = 'none';
+    console.log('[UI] Filter cleared');
     loadExpenses();
 });
 
@@ -187,6 +190,8 @@ btnExport.addEventListener('click', async () => {
             params.append('endDate', currentFilter.endDate);
             url += `?${params.toString()}`;
         }
+
+        console.log(`[UI] Exporting CSV with params: ${params.toString() || 'None'}`);
 
         const response = await fetch(url);
 
@@ -245,6 +250,8 @@ expenseForm.addEventListener('submit', async (e) => {
         category: document.getElementById('category').value,
         date: document.getElementById('date').value
     };
+
+    console.log('[UI] Submitting new expense:', formData);
 
     try {
         const response = await fetch(`${API_URL}/expenses`, {
@@ -323,9 +330,37 @@ function displayExpenses(expenses) {
                 <div class="expense-date">${formatDate(expense.date)}</div>
             </div>
             <div class="expense-amount">R$ ${formatCurrency(expense.amount)}</div>
+            <button class="btn-delete" onclick="deleteExpense(${expense.id})" title="Excluir">
+                🗑️
+            </button>
         </div>
     `).join('');
 }
+
+// Delete expense
+async function deleteExpense(id) {
+    if (confirm('Tem certeza que deseja apagar este registro?')) {
+        console.log(`[UI] Deleting expense ID: ${id}`);
+        try {
+            const response = await fetch(`${API_URL}/expenses/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete expense');
+            }
+
+            // Reload data
+            loadExpenses();
+            loadTodayTotal();
+
+        } catch (error) {
+            console.error('Error deleting expense:', error);
+            alert('Erro ao apagar registro. Tente novamente.');
+        }
+    }
+}
+
 
 // Load today's total from API
 async function loadTodayTotal() {
