@@ -29,6 +29,7 @@ function initializeDatabase() {
       amount REAL NOT NULL,
       category TEXT NOT NULL,
       date TEXT NOT NULL,
+      description TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `, (err) => {
@@ -36,6 +37,26 @@ function initializeDatabase() {
             console.error('Error creating table:', err.message);
         } else {
             console.log('Database initialized successfully');
+
+            // Check if description column exists (for existing databases)
+            db.all("PRAGMA table_info(expenses)", (err, rows) => {
+                if (err) {
+                    console.error('Error checking table schema:', err.message);
+                    return;
+                }
+
+                const hasDescription = rows.some(col => col.name === 'description');
+                if (!hasDescription) {
+                    console.log('Adding description column to existing table...');
+                    db.run('ALTER TABLE expenses ADD COLUMN description TEXT', (err) => {
+                        if (err) {
+                            console.error('Error adding description column:', err.message);
+                        } else {
+                            console.log('Description column added successfully');
+                        }
+                    });
+                }
+            });
         }
     });
 }
@@ -44,8 +65,8 @@ function initializeDatabase() {
 
 // POST /api/expenses - Create new expense
 app.post('/api/expenses', (req, res) => {
-    const { amount, category, date } = req.body;
-    console.log(`[POST] /api/expenses - Adding expense: Amount=${amount}, Category=${category}, Date=${date}`);
+    const { amount, category, date, description } = req.body;
+    console.log(`[POST] /api/expenses - Adding expense: Amount=${amount}, Category=${category}, Date=${date}, Desc=${description || 'None'}`);
 
 
     // Validation
@@ -57,8 +78,8 @@ app.post('/api/expenses', (req, res) => {
         return res.status(400).json({ error: 'Amount must be a positive number' });
     }
 
-    const sql = 'INSERT INTO expenses (amount, category, date) VALUES (?, ?, ?)';
-    db.run(sql, [amount, category, date], function (err) {
+    const sql = 'INSERT INTO expenses (amount, category, date, description) VALUES (?, ?, ?, ?)';
+    db.run(sql, [amount, category, date, description || ''], function (err) {
         if (err) {
             console.error('Error inserting expense:', err.message);
             return res.status(500).json({ error: 'Failed to save expense' });
@@ -69,6 +90,7 @@ app.post('/api/expenses', (req, res) => {
             amount,
             category,
             date,
+            description,
             message: 'Expense saved successfully'
         });
     });
@@ -158,11 +180,12 @@ app.get('/api/expenses/export', (req, res) => {
         }
 
         // Create CSV header
-        const csvHeader = 'ID,Valor,Categoria,Data,Criado em\n';
+        const csvHeader = 'ID,Valor,Categoria,Data,Descrição,Criado em\n';
 
         // Create CSV rows
         const csvRows = rows.map(row => {
-            return `${row.id},${row.amount},${row.category},${row.date},${row.created_at}`;
+            const description = row.description ? `"${row.description.replace(/"/g, '""')}"` : ''; // Handle quotes
+            return `${row.id},${row.amount},${row.category},${row.date},${description},${row.created_at}`;
         }).join('\n');
 
         const csv = csvHeader + csvRows;

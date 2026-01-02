@@ -248,6 +248,7 @@ expenseForm.addEventListener('submit', async (e) => {
     const formData = {
         amount: parseFloat(document.getElementById('amount').value),
         category: document.getElementById('category').value,
+        description: document.getElementById('description').value,
         date: document.getElementById('date').value
     };
 
@@ -328,6 +329,7 @@ function displayExpenses(expenses) {
             <div class="expense-details">
                 <div class="expense-category">${expense.category}</div>
                 <div class="expense-date">${formatDate(expense.date)}</div>
+                ${expense.description ? `<div class="expense-description">${expense.description}</div>` : ''}
             </div>
             <div class="expense-amount">R$ ${formatCurrency(expense.amount)}</div>
             <button class="btn-delete" onclick="deleteExpense(${expense.id})" title="Excluir">

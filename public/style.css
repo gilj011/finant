@@ -466,6 +466,13 @@ header h1 {
     color: var(--text-secondary);
 }
 
+.expense-description {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-top: 0.125rem;
+}
+
 .expense-amount {
     font-size: 1.125rem;
     font-weight: 700;
